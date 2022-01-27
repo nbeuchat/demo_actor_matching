@@ -3,6 +3,7 @@ import requests
 import pandas as pd
 from io import BytesIO
 from tqdm import tqdm
+from time import time
 
 
 def get_image(url: str):
@@ -14,7 +15,8 @@ def get_image(url: str):
 def get_embeddings(url: str):
     try:
         image = get_image(url)
-        return list(face_recognition.face_encodings(image, num_jitters=5, model="large")[0])
+        embeddings = face_recognition.face_encodings(image, num_jitters=2, model="large")
+        return list(embeddings[0])
     except Exception as e:
         print(e)
 
@@ -32,12 +34,14 @@ def process_all_images(input_file, output_file):
     df = df.sample(frac=1) # shuffle so you get some images for everybody while it's running
     for i, row in tqdm(df.iterrows(), total=df.shape[0]):
         embeddings = get_embeddings(row["contentUrl"])
-        if embeddings:
-            new_row = row.copy()
-            new_row["embeddings"] = embeddings
-            df_emb = df_emb.append(new_row, ignore_index=True)
+        new_row = row.copy()
+        new_row["embeddings"] = embeddings
+        df_emb = df_emb.append(new_row, ignore_index=True)
+
+        if i % 5 == 0:
             df_emb.to_csv(output_file, index=False)
-    
+
+    df_emb.to_csv(output_file, index=False)
     return df_emb
 
 def build_annoy_index():
