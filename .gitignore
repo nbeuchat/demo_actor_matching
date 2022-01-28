@@ -1,9 +1,13 @@
+# IDE
+.vscode
+
 # data files from imdb
 data/title.*.tsv*
 data/name.*.tsv*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
+*/__pycache__/
 *.py[cod]
 *$py.class
 

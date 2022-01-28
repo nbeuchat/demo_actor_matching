@@ -1,7 +1,9 @@
-# Inference
+# App
 cmake  # required for dlib (used by face_recognition)
 face_recognition
 annoy
+matplotlib
+gradio
 
 # Preprocessing
 microsoft-bing-imagesearch
