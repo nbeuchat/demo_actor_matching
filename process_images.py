@@ -21,7 +21,7 @@ def get_embeddings(url: str):
         print(e)
 
 def process_all_images(input_file, output_file):
-    df = pd.read_csv(input_file)[["nconst","contentUrl"]]
+    df = pd.read_csv(input_file)[["nconst","contentUrl","resultPosition"]]
     
     try:
         df_emb = pd.read_csv(output_file)
@@ -31,11 +31,13 @@ def process_all_images(input_file, output_file):
         df_emb = pd.DataFrame(columns=list(df.columns) + ["embeddings"])
 
     print(f"Start processing of {df.shape[0]} images")
-    df = df.sample(frac=1) # shuffle so you get some images for everybody while it's running
+    df = df.sort_values("resultPosition", ascending=True)
+    #df = df.sample(frac=1) # shuffle so you get some images for everybody while it's running
     for i, row in tqdm(df.iterrows(), total=df.shape[0]):
         embeddings = get_embeddings(row["contentUrl"])
         new_row = row.copy()
         new_row["embeddings"] = embeddings
+        new_row = new_row[["nconst", "contentUrl", "embeddings"]]
         df_emb = df_emb.append(new_row, ignore_index=True)
 
         if i % 5 == 0:

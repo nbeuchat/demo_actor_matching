@@ -20,7 +20,7 @@ def get_actor_images(name: str, count: int = 50, api_key: str = BING_API_KEY):
     headers = {
         "Ocp-Apim-Subscription-Key": BING_API_KEY
     }
-    query = f"{name}, actor or actress"
+    query = f'"{name}"'
     params = {
         "q": query,
         "count": count,
@@ -35,8 +35,8 @@ def get_actor_images(name: str, count: int = 50, api_key: str = BING_API_KEY):
         params=params
     )
 
-    if response.status_code == 200:
-        return response.json()
+    response.raise_for_status()
+    return response.json()
 
 def read_actors_list(max_actors: int = None, last_year_active: int = None, sort_by: str = None):
     """Read and filter the list of actors"""
@@ -77,10 +77,15 @@ def store_all_actor_images_data(
 
     print(f"Start retrieving images from Bing for {len(df)} actors")
     for _, row in tqdm(df.iterrows(), total=df.shape[0]):
-        images_data = get_actor_images(
-            name=row["primaryName"],
-            count=images_per_actor
-        )
+        try:
+            images_data = get_actor_images(
+                name=row["primaryName"],
+                count=images_per_actor
+            )
+        except Exception as e:
+            print(e)
+            continue 
+
         df_im_tmp = pd.DataFrame(images_data["value"])
         df_im_tmp["nconst"] = row["nconst"]
         df_im_tmp["resultPosition"] = list(range(0, len(df_im_tmp)))
@@ -99,9 +104,9 @@ def store_all_actor_images_data(
 
 if __name__ == "__main__":
     store_all_actor_images_data(
-        output_file="data/actors_images.csv", 
-        max_actors=1000, 
+        output_file="data/actors_images_new.csv", 
+        max_actors=2000, 
         images_per_actor=20,
         last_year_active=datetime.now().year - 5,
-        max_api_calls_per_second=2
+        max_api_calls_per_second=100
     )
