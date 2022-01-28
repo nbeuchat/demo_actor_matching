@@ -15,7 +15,7 @@ def process_actors_data(keep_alive: bool = True):
         df = df[df["deathYear"].isna()]
     df = df[df.knownForTitles.apply(lambda x: len(x)) > 0]
     df = df.dropna(subset=["primaryProfession"])
-    df = df[df.primaryProfession.apply(lambda x: "actor" in x.split(","))]
+    df = df[df.primaryProfession.apply(lambda x: any([p in {"actor", "actress"} for p in x.split(",")]))]
     df = df[df.knownForTitles != "\\N"]
     df = df.dropna(subset=["birthYear"])
     #df["knownForTitles"] = df["knownForTitles"].apply(lambda x: x.split(","))
@@ -23,7 +23,7 @@ def process_actors_data(keep_alive: bool = True):
     #dfat = df[["nconst", "knownForTitles"]].explode("knownForTitles")
     #dfat.columns = ["nconst", "tconst"]
     dfat = pd.read_csv("data/title.principals.tsv.gz", sep="\t")
-    dfat = dfat[dfat.category.isin(["actor", "self"])][["tconst", "nconst"]]
+    dfat = dfat[dfat.category.isin(["actor", "actress", "self"])][["tconst", "nconst"]]
 
     
     # Get data for the movies/shows the actors were known for
