@@ -1,0 +1,11 @@
+-r requirements.txt 
+
+# Preprocessing
+microsoft-bing-imagesearch
+python-dotenv
+pandas
+tqdm
+
+# visualization
+jupyter
+matplotlib
