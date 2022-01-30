@@ -1,4 +1,14 @@
-# Actor matching demo
+---
+title: Actors matching
+emoji: 🎬
+colorFrom: yellow
+colorTo: orange
+sdk: gradio
+app_file: app.py
+pinned: true
+---
+
+# Actors matching demo
 
 Who should play Hannibal (the Carthaginian, not the cannibal) if HBO ever adapts his story? How about you? Who should be your actor?
 This application lets you input an image and see the top three actors that more closely resemble the image based on facial features.
