@@ -13,7 +13,7 @@ pinned: true
 Who should play Hannibal (the Carthaginian, not the cannibal) if HBO ever adapts his story? How about you? Who should be your actor?
 This application lets you input an image and see the top three actors that more closely resemble the image based on facial features.
 
-Try it out on HugginFace _[Coming Soon]_
+Try it out on my [HugginFace Space](https://huggingface.co/spaces/nbeuchat/actors_matching)  
 
 
 ## Data
