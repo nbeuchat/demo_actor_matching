@@ -5,6 +5,9 @@
 data/title.*.tsv*
 data/name.*.tsv*
 
+# Gradio local
+flagged/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 */__pycache__/
