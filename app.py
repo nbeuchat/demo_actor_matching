@@ -1,7 +1,9 @@
 import gradio as gr
+import PIL
+import numpy as np
+import re
 from actors_matching.api import analyze_image, load_annoy_index
 from pathlib import Path
-
 
 annoy_index, actors_mapping = load_annoy_index()
 
@@ -29,8 +31,22 @@ def get_best_matches(image, n_matches: int):
     return analyze_image(image, annoy_index=annoy_index, n_matches=n_matches)
 
 
+def resize_image_keep_ratio(input_image: np.array, size: tuple):
+    resized_image = PIL.Image.fromarray(input_image)
+    resized_image.thumbnail(size, PIL.Image.ANTIALIAS)
+    return np.array(resized_image)
+
+
+def get_article_text():
+    article = Path("README.md").read_text()
+    # Remove the HuggingFace Space app information from the README
+    article = re.sub(r"^---.+---\s+", "", article, flags=re.MULTILINE + re.DOTALL)
+    return article
+
+
 def find_matching_actors(input_img, title, n_matches: int = 10):
-    best_matches_list = get_best_matches(input_img, n_matches=n_matches)
+    resized_image = resize_image_keep_ratio(input_img, (512, 512))
+    best_matches_list = get_best_matches(resized_image, n_matches=n_matches)
 
     # TODO: allow looping through characters
     if best_matches_list:
@@ -55,9 +71,13 @@ iface = gr.Interface(
     title="Which actor or actress looks like you?",
     description="""Who is the best person to play a movie about you? Upload a picture and find out!
     Or maybe you'd like to know who would best interpret your favorite historical character? 
-    Give it a shot or try one of the sample images below.\nPlease read below for more information on biases
+    Give it a shot or try one of the sample images below.
+    
+    Built with ❤️ using great open-source libraries such as dlib, face_recognition and Annoy.
+    
+    Please read below for more information on biases
     and limitations of the tool!""",
-    article=Path("README.md").read_text(),
+    article=get_article_text(),
     inputs=[
         gr.inputs.Image(shape=None, label="Your image"),
         gr.inputs.Textbox(
