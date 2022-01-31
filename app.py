@@ -59,7 +59,7 @@ iface = gr.Interface(
     and limitations of the tool!""",
     article=Path("README.md").read_text(),
     inputs=[
-        gr.inputs.Image(shape=(256, 256), label="Your image"),
+        gr.inputs.Image(shape=None, label="Your image"),
         gr.inputs.Textbox(
             label="Who's that?", placeholder="Optional, you can leave this blank"
         ),
